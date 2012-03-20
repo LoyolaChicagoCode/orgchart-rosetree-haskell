@@ -1,6 +1,7 @@
 module OrgChart(mkPerson, mkOU) where
 
 import Data.Tree
+import Data.Foldable
 import Control.Arrow
 
 data NodeData p u = Person p | OU u deriving (Eq, Show)
@@ -37,3 +38,9 @@ raiseNode perc (Person p) = Person $ second (incBy perc) p
 raiseNode perc (OU u)     = OU     $ second (incBy perc) u
 
 org' = fmap (raiseNode 2.5) org
+
+getSalary :: (Integral i) => NodeData (a, i) (b, c) -> i
+getSalary (Person (_, s)) = s
+getSalary (OU (_, _)) = 0
+
+payroll = Data.Foldable.foldl (+)  0 $ fmap getSalary org
